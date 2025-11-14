@@ -24,10 +24,12 @@ LightRAG uses dynamic package installation (`pipmaster`) for optional features b
 LightRAG dynamically installs packages for:
 
 - **Storage Backends**: `redis`, `neo4j`, `pymilvus`, `pymongo`, `asyncpg`, `qdrant-client`
-- **LLM Providers**: `openai`, `anthropic`, `ollama`, `zhipuai`, `aioboto3`, `voyageai`, `llama-index`, `lmdeploy`, `transformers`, `torch`
+- **LLM Providers**: `openai`, `anthropic`, `ollama`, `zhipuai`, `aioboto3`, `voyageai`, `llama-index`, `google-genai`
 - **Tiktoken Models**: BPE encoding models downloaded from OpenAI CDN
 
-**Note**: Document processing dependencies (`pypdf`, `python-docx`, `python-pptx`, `openpyxl`) are now pre-installed with the `api` extras group and no longer require dynamic installation.
+**Note**: Document processing dependencies (`pypdf`, `python-docx`, `python-pptx`, `openpyxl`, `pycryptodome`) are now pre-installed with the `api` extras group and no longer require dynamic installation.
+
+**Important**: Software packages requiring `transformers`, `torch`, or `cuda` (such as Hugging Face transformers and LMDeploy) are not included in the offline dependency group and are outside the scope of offline installation support.
 
 ## Quick Start
 
@@ -216,8 +218,8 @@ python -c "from lightrag import LightRAG; print('✓ LightRAG imported')"
 python -c "from lightrag.utils import TiktokenTokenizer; t = TiktokenTokenizer(); print('✓ Tiktoken working')"
 
 # Test optional dependencies (if installed)
-python -c "import docling; print('✓ Docling available')"
 python -c "import redis; print('✓ Redis available')"
+python -c "import neo4j; print('✓ Neo4j available')"
 ```
 
 ## Troubleshooting
