@@ -21,12 +21,12 @@ cd LightRAG
 
 ```bash
 # Linux/MacOS
-cp .env.example .env
+cp env.example .env
 # Edit .env with your preferred configuration
 ```
 ```powershell
 # Windows PowerShell
-Copy-Item .env.example .env
+Copy-Item env.example .env
 # Edit .env with your preferred configuration
 ```
 
@@ -39,21 +39,28 @@ LightRAG can be configured using environment variables in the `.env` file:
 
 **LLM Configuration**
 
-- `LLM_BINDING`: LLM backend to use (lollms/ollama/openai)
-- `LLM_BINDING_HOST`: LLM server host URL
+- `LLM_BINDING`: LLM backend to use (openai/ollama/lollms/azure_openai/aws_bedrock/gemini)
+- `LLM_BINDING_HOST`: LLM server host URL or endpoint
 - `LLM_MODEL`: Model name to use
+- `LLM_BINDING_API_KEY`: API key for LLM service
+- `LLM_TIMEOUT`: LLM request timeout (default: 180 seconds)
 
 **Embedding Configuration**
 
-- `EMBEDDING_BINDING`: Embedding backend (lollms/ollama/openai)
-- `EMBEDDING_BINDING_HOST`: Embedding server host URL
+- `EMBEDDING_BINDING`: Embedding backend (openai/ollama/azure_openai/jina/lollms/aws_bedrock/gemini)
+- `EMBEDDING_BINDING_HOST`: Embedding server host URL or endpoint
 - `EMBEDDING_MODEL`: Embedding model name
+- `EMBEDDING_DIM`: Embedding dimensions
+- `EMBEDDING_BINDING_API_KEY`: API key for embedding service
+- `EMBEDDING_TIMEOUT`: Embedding request timeout (default: 30 seconds)
 
 **RAG Configuration**
 
-- `MAX_ASYNC`: Maximum async operations
-- `MAX_TOKENS`: Maximum token size
-- `EMBEDDING_DIM`: Embedding dimensions
+- `MAX_ASYNC`: Maximum async operations for LLM (default: 4)
+- `MAX_PARALLEL_INSERT`: Number of parallel processing documents (default: 2)
+- `EMBEDDING_FUNC_MAX_ASYNC`: Maximum async operations for embedding (default: 8)
+- `TOP_K`: Number of entities or relations retrieved from KG (default: 40)
+- `CHUNK_TOP_K`: Maximum number of chunks for naive vector search (default: 20)
 
 ## 🐳 Docker Deployment
 
@@ -93,7 +100,14 @@ docker compose up
 
 ### Offline deployment
 
-Software packages requiring `transformers`, `torch`, or `cuda` will is not preinstalled in the dokcer images. Consequently, document extraction tools such as Docling, as well as local LLM models like Hugging Face and LMDeploy, can not be used in an off line enviroment. These high-compute-resource-demanding services should not be integrated into LightRAG. Docling will be decoupled and deployed as a standalone service.
+The Docker image includes all dependencies for offline operation:
+
+- **Pre-installed packages**: All `api` and `offline` extras are included (storage backends, LLM providers, document processing libraries)
+- **Tiktoken cache**: Pre-downloaded BPE encoding models for common LLM models (gpt-4o-mini, gpt-4o, gpt-4, etc.)
+- **Environment variables**: Set `TIKTOKEN_CACHE_DIR=/app/data/tiktoken` to use the pre-cached files
+- **Data directories**: `/app/data/rag_storage` for RAG data, `/app/data/inputs` for input documents
+
+**Note**: Software packages requiring `transformers`, `torch`, or `cuda` are not preinstalled in the Docker images. Consequently, document extraction tools such as Docling, as well as local LLM models like Hugging Face and LMDeploy, cannot be used. These high-compute-resource-demanding services should be deployed as standalone services.
 
 ## 📦 Build Docker Images
 
